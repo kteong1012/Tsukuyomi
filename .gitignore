@@ -1,0 +1,87 @@
+# =====================
+# Unity 生成目录
+# =====================
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# =====================
+# Unity 缓存与本地文件
+# =====================
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+sysinfo.txt
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# MemoryCaptures 可能包含敏感信息
+MemoryCaptures/
+
+# Asset Bundle 构建产物
+AssetBundleGraph/
+
+# =====================
+# Visual Studio / Rider
+# =====================
+.vs/
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+ExportedObj/
+.idea/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+
+# =====================
+# OS 生成文件
+# =====================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# =====================
+# JetBrains Rider
+# =====================
+.idea/
+*.sln.iml
+
+# =====================
+# Crashlytics
+# =====================
+crashlytics-build.properties
+
+# =====================
+# 本地覆盖配置（不提交到仓库）
+# =====================
+# Claude Code 本地覆盖配置（个人敏感配置）
+.claude/settings.local.json
+
+# =====================
+# 保留以下 Unity 特殊文件
+# =====================
+# 不忽略：
+#   Assets/          所有资产
+#   Packages/        包管理配置
+#   ProjectSettings/ 项目设置
+#   .claude/         AI 工作流配置（技能等）
