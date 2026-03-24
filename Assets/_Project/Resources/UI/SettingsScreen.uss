@@ -1,4 +1,4 @@
-.screen.settings-overlay {
+.settings-overlay {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -24,7 +24,7 @@
 
 .settings-title {
     color: #eef4ff;
-    unity-font-style: bold;
+    -unity-font-style: bold;
     font-size: 30px;
     margin-bottom: 14px;
 }
@@ -56,4 +56,9 @@
     border-top-right-radius: 8px;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
+}
+
+.settings-close-button:hover {
+    background-color: #2e5580;
+    color: #ffffff;
 }

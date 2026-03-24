@@ -1,4 +1,5 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Project/Resources/UI/SettingsScreen.uss?fileID=7433441132597879392&amp;guid=03292ede07b0bc84e92bded750b7f95f&amp;type=3#SettingsScreen" />
     <ui:VisualElement name="settings-overlay-root" class="screen settings-overlay">
         <ui:VisualElement class="settings-card">
             <ui:Label text="Settings" class="settings-title" />

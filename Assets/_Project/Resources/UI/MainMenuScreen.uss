@@ -7,7 +7,7 @@
 
 .main-menu-title {
     color: #ecf0f7;
-    unity-font-style: bold;
+    -unity-font-style: bold;
     font-size: 56px;
     margin-bottom: 8px;
 }
@@ -20,8 +20,15 @@
 
 .main-menu-actions {
     width: 420px;
-    gap: 12px;
     align-items: stretch;
+}
+
+.main-menu-actions > .main-menu-button {
+    margin-top: 12px;
+}
+
+.main-menu-actions > .main-menu-button:first-child {
+    margin-top: 0;
 }
 
 .main-menu-button {
@@ -39,10 +46,23 @@
     border-bottom-width: 0;
 }
 
+.main-menu-button:hover {
+    background-color: #2e5280;
+    color: #ffffff;
+}
+
 .main-menu-button.secondary {
     background-color: #305f76;
 }
 
+.main-menu-button.secondary:hover {
+    background-color: #3d7490;
+}
+
 .main-menu-button.danger {
     background-color: #6a2a36;
+}
+
+.main-menu-button.danger:hover {
+    background-color: #8a3545;
 }

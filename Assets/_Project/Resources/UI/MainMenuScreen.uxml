@@ -1,4 +1,5 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Project/Resources/UI/MainMenuScreen.uss?fileID=7433441132597879392&amp;guid=ce964139be637294ebd3e51a594f92a2&amp;type=3#MainMenuScreen" />
     <ui:VisualElement name="main-menu-root" class="screen main-menu">
         <ui:Label text="TSUKUYOMI" class="main-menu-title" />
         <ui:Label name="build-label" text="Build: -/-" class="main-menu-build-label" />

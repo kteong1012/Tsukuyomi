@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Reflection;
 using Tsukuyomi.Application.Config;
 using Tsukuyomi.Application.Settings;
@@ -18,12 +19,15 @@ namespace Tsukuyomi.Bootstrap
 {
     public sealed class ProjectCompositionRoot : MonoBehaviour
     {
-        private static bool _isBootstrapped;
+        private const string RuntimePanelSettingsResourcePath = "UI/RuntimePanelSettings";
+
+        private static ProjectCompositionRoot _instance;
 
         private IConfigHotReloadService _hotReloadService;
         private IUiNavigator _uiNavigator;
         private PanelSettings _runtimePanelSettings;
         private GameObject _runtimeUiRoot;
+        private bool _isComposed;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
@@ -33,31 +37,40 @@ namespace Tsukuyomi.Bootstrap
 
         public static void EnsureInitializedForTests()
         {
-            if (FindFirstObjectByType<ProjectCompositionRoot>() != null)
+            if (_instance != null)
             {
+                return;
+            }
+
+            var existing = FindFirstObjectByType<ProjectCompositionRoot>();
+            if (existing != null)
+            {
+                _instance = existing;
                 return;
             }
 
             var rootObject = new GameObject("[ProjectCompositionRoot]");
             DontDestroyOnLoad(rootObject);
-            rootObject.AddComponent<ProjectCompositionRoot>();
+            _instance = rootObject.AddComponent<ProjectCompositionRoot>();
         }
 
         private void Awake()
         {
-            if (_isBootstrapped)
+            if (_instance != null && _instance != this)
             {
                 Destroy(gameObject);
                 return;
             }
 
-            _isBootstrapped = true;
+            _instance = this;
             DontDestroyOnLoad(gameObject);
         }
 
-        private void Start()
+        private IEnumerator Start()
         {
-            Compose();
+            // Wait one frame to ensure UIDocument internals are ready before binding runtime UI.
+            yield return null;
+            ComposeSafely();
         }
 
         private void OnDestroy()
@@ -76,13 +89,39 @@ namespace Tsukuyomi.Bootstrap
             }
 
             ProjectRuntime.Reset();
-            _isBootstrapped = false;
+            if (_instance == this)
+            {
+                _instance = null;
+            }
+        }
+
+        private void ComposeSafely()
+        {
+            if (_isComposed)
+            {
+                return;
+            }
+
+            try
+            {
+                Compose();
+                _isComposed = true;
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception, this);
+            }
         }
 
         private void Compose()
         {
             EnsureInputEventSystem();
             var uiRoot = EnsureRuntimeUiRoot();
+            if (uiRoot == null)
+            {
+                Debug.LogError("UIDocument root visual element is not ready. UI bootstrap aborted.", this);
+                return;
+            }
 
             var validator = new JsonSchemaConfigValidator();
             var configRepository = new JsonConfigRepository<GameSettingsConfig>(
@@ -124,13 +163,22 @@ namespace Tsukuyomi.Bootstrap
             var eventSystemObject = new GameObject("EventSystem");
             DontDestroyOnLoad(eventSystemObject);
             eventSystemObject.AddComponent<EventSystem>();
-            var inputModule = eventSystemObject.AddComponent<InputSystemUIInputModule>();
 
-            // Different InputSystem package versions expose this API with different visibility.
-            var assignMethod = typeof(InputSystemUIInputModule).GetMethod(
-                "AssignDefaultActions",
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            assignMethod?.Invoke(inputModule, Array.Empty<object>());
+            try
+            {
+                var inputModule = eventSystemObject.AddComponent<InputSystemUIInputModule>();
+                // Different InputSystem package versions expose this API with different visibility.
+                var assignMethod = typeof(InputSystemUIInputModule).GetMethod(
+                    "AssignDefaultActions",
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                assignMethod?.Invoke(inputModule, Array.Empty<object>());
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning(
+                    $"InputSystemUIInputModule init failed. Falling back to StandaloneInputModule. {exception.Message}");
+                eventSystemObject.AddComponent<StandaloneInputModule>();
+            }
         }
 
         private VisualElement EnsureRuntimeUiRoot()
@@ -141,15 +189,47 @@ namespace Tsukuyomi.Bootstrap
                 _runtimeUiRoot.transform.SetParent(transform, false);
 
                 var uiDocument = _runtimeUiRoot.AddComponent<UIDocument>();
-                _runtimePanelSettings = ScriptableObject.CreateInstance<PanelSettings>();
+                _runtimePanelSettings = CreateRuntimePanelSettings();
                 uiDocument.panelSettings = _runtimePanelSettings;
             }
 
             var document = _runtimeUiRoot.GetComponent<UIDocument>();
             var rootVisualElement = document.rootVisualElement;
+            if (rootVisualElement == null)
+            {
+                return null;
+            }
+
             rootVisualElement.style.flexGrow = 1f;
+            rootVisualElement.style.width = Length.Percent(100);
+            rootVisualElement.style.height = Length.Percent(100);
             rootVisualElement.AddToClassList("runtime-root");
             return rootVisualElement;
+        }
+
+        private static PanelSettings CreateRuntimePanelSettings()
+        {
+            var panelSettingsTemplate = Resources.Load<PanelSettings>(RuntimePanelSettingsResourcePath);
+            if (panelSettingsTemplate != null)
+            {
+                return Instantiate(panelSettingsTemplate);
+            }
+
+            var panelSettings = ScriptableObject.CreateInstance<PanelSettings>();
+            panelSettings.themeStyleSheet = LoadRuntimeTheme();
+            return panelSettings;
+        }
+
+        private static ThemeStyleSheet LoadRuntimeTheme()
+        {
+            var theme = Resources.Load<ThemeStyleSheet>("UI/UnityDefaultRuntimeTheme");
+            if (theme == null)
+            {
+                Debug.LogError(
+                    "Missing runtime UI Toolkit theme. Expected Resources/UI/UnityDefaultRuntimeTheme.tss");
+            }
+
+            return theme;
         }
 
         private static IEnumerable<ScreenDefinition> BuildScreenDefinitions()

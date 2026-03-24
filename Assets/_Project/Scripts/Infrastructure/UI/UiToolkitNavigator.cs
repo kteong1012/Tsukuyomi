@@ -227,8 +227,22 @@ namespace Tsukuyomi.Infrastructure.UI
             var root = visualTree.Instantiate();
             root.name = screenId.ToString();
             root.style.display = DisplayStyle.None;
-            root.style.flexGrow = 1f;
             root.AddToClassList("screen-root");
+
+            if (definition.Layer == ScreenLayer.Base)
+            {
+                root.style.position = Position.Relative;
+                root.style.flexGrow = 1f;
+            }
+            else
+            {
+                // Overlay/modal screens must be detached from normal layout flow.
+                root.style.position = Position.Absolute;
+                root.style.left = 0;
+                root.style.right = 0;
+                root.style.top = 0;
+                root.style.bottom = 0;
+            }
 
             foreach (var ussPath in definition.UssPaths)
             {
