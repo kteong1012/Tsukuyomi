@@ -1,0 +1,17 @@
+{
+  "buildLabel": "prototype-001",
+  "ui": {
+    "defaultScreen": "MainMenu",
+    "theme": "day"
+  },
+  "audio": {
+    "masterVolume": 0.85,
+    "musicVolume": 0.7,
+    "sfxVolume": 0.8
+  },
+  "video": {
+    "fullscreen": true,
+    "resolution": "1920x1080",
+    "targetFrameRate": 60
+  }
+}

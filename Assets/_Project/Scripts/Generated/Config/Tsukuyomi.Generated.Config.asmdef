@@ -1,0 +1,14 @@
+{
+  "name": "Tsukuyomi.Generated.Config",
+  "rootNamespace": "Tsukuyomi.Generated.Config",
+  "references": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

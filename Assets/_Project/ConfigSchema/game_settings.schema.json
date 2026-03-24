@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GameSettingsConfig",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "buildLabel",
+    "ui",
+    "audio",
+    "video"
+  ],
+  "properties": {
+    "buildLabel": {
+      "type": "string"
+    },
+    "ui": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "defaultScreen",
+        "theme"
+      ],
+      "properties": {
+        "defaultScreen": {
+          "type": "string",
+          "enum": [
+            "MainMenu"
+          ]
+        },
+        "theme": {
+          "type": "string",
+          "enum": [
+            "day"
+          ]
+        }
+      }
+    },
+    "audio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "masterVolume",
+        "musicVolume",
+        "sfxVolume"
+      ],
+      "properties": {
+        "masterVolume": {
+          "type": "number"
+        },
+        "musicVolume": {
+          "type": "number"
+        },
+        "sfxVolume": {
+          "type": "number"
+        }
+      }
+    },
+    "video": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fullscreen",
+        "resolution",
+        "targetFrameRate"
+      ],
+      "properties": {
+        "fullscreen": {
+          "type": "boolean"
+        },
+        "resolution": {
+          "type": "string"
+        },
+        "targetFrameRate": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}

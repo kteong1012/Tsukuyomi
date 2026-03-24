@@ -1,0 +1,21 @@
+{
+  "name": "Tsukuyomi.Bootstrap",
+  "rootNamespace": "Tsukuyomi.Bootstrap",
+  "references": [
+    "Tsukuyomi.Application",
+    "Tsukuyomi.Domain",
+    "Tsukuyomi.Infrastructure",
+    "Tsukuyomi.Presentation",
+    "Tsukuyomi.Generated.Config",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

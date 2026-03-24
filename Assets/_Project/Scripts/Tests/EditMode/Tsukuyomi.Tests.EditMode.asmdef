@@ -1,0 +1,24 @@
+{
+  "name": "Tsukuyomi.Tests.EditMode",
+  "rootNamespace": "Tsukuyomi.Tests.EditMode",
+  "references": [
+    "Tsukuyomi.Application",
+    "Tsukuyomi.Domain",
+    "Tsukuyomi.Infrastructure",
+    "Tsukuyomi.Generated.Config"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

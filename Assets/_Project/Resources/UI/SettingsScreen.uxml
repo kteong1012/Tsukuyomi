@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement name="settings-overlay-root" class="screen settings-overlay">
+        <ui:VisualElement class="settings-card">
+            <ui:Label text="Settings" class="settings-title" />
+            <ui:VisualElement class="settings-row">
+                <ui:Label text="Master Volume" class="settings-label" />
+                <ui:Slider name="master-volume-slider" low-value="0" high-value="1" value="0.85" class="settings-control" />
+            </ui:VisualElement>
+            <ui:VisualElement class="settings-row">
+                <ui:Label text="Fullscreen" class="settings-label" />
+                <ui:Toggle name="fullscreen-toggle" value="true" class="settings-control" />
+            </ui:VisualElement>
+            <ui:Button name="back-btn" text="Close" class="settings-close-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

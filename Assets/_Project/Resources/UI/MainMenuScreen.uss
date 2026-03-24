@@ -1,0 +1,48 @@
+.screen.main-menu {
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    background-color: #0f1726;
+}
+
+.main-menu-title {
+    color: #ecf0f7;
+    unity-font-style: bold;
+    font-size: 56px;
+    margin-bottom: 8px;
+}
+
+.main-menu-build-label {
+    color: #9fb4d4;
+    font-size: 16px;
+    margin-bottom: 28px;
+}
+
+.main-menu-actions {
+    width: 420px;
+    gap: 12px;
+    align-items: stretch;
+}
+
+.main-menu-button {
+    height: 48px;
+    font-size: 18px;
+    color: #f8fbff;
+    background-color: #234066;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+}
+
+.main-menu-button.secondary {
+    background-color: #305f76;
+}
+
+.main-menu-button.danger {
+    background-color: #6a2a36;
+}

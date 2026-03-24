@@ -1,0 +1,49 @@
+{
+    "name": "InputSystem_Actions",
+    "maps": [
+        {
+            "name": "UI",
+            "id": "cd5b9afc-88a5-44f2-a6c0-27895d447110",
+            "actions": [
+                { "name": "Navigate", "type": "PassThrough", "id": "f9317169-c7b4-4433-b37d-4c2f6b8efef9", "expectedControlType": "Vector2" },
+                { "name": "Submit", "type": "Button", "id": "8ca9d4fd-8365-4adb-bb49-f9a9a34b9751", "expectedControlType": "Button" },
+                { "name": "Cancel", "type": "Button", "id": "3ebf07c2-a3de-4b39-9f74-1168f5944f1f", "expectedControlType": "Button" },
+                { "name": "Point", "type": "PassThrough", "id": "432ca3d8-719e-4f8e-ab16-d4f7dc072776", "expectedControlType": "Vector2" },
+                { "name": "Click", "type": "PassThrough", "id": "f7fec3e9-7be0-4abd-bc65-cce8f9cbf8e0", "expectedControlType": "Button" },
+                { "name": "ScrollWheel", "type": "PassThrough", "id": "5298d77b-e385-48f2-b111-c55f5036ec8e", "expectedControlType": "Vector2" }
+            ],
+            "bindings": [
+                { "name": "2D Vector", "id": "cb97618f-3af0-44ee-96a5-4cd56f4783f8", "path": "2DVector", "action": "Navigate", "isComposite": true },
+                { "name": "up", "id": "2cd70e45-4af7-4bc2-8963-d1e6fe5cbf9d", "path": "<Keyboard>/w", "action": "Navigate", "isPartOfComposite": true },
+                { "name": "down", "id": "2fb7d4f4-466b-4e95-95e8-03fef8d6e237", "path": "<Keyboard>/s", "action": "Navigate", "isPartOfComposite": true },
+                { "name": "left", "id": "7087d35b-0600-4f22-8181-d1f3f2b9ca13", "path": "<Keyboard>/a", "action": "Navigate", "isPartOfComposite": true },
+                { "name": "right", "id": "a2859bd7-2af9-42e6-9dc4-e6a2d22f74f4", "path": "<Keyboard>/d", "action": "Navigate", "isPartOfComposite": true },
+                { "name": "", "id": "0e50a4c8-923a-4869-b67b-b1dcbf3866ca", "path": "<Gamepad>/leftStick", "action": "Navigate" },
+                { "name": "", "id": "fe50dd08-baa3-4a5d-bb79-63ec342f2f44", "path": "<Keyboard>/enter", "action": "Submit" },
+                { "name": "", "id": "9a5ea0c5-a8f8-40fc-ae84-7a3de04874ea", "path": "<Gamepad>/buttonSouth", "action": "Submit" },
+                { "name": "", "id": "fb8fe828-f063-4f7f-b5dd-962f8d315b2a", "path": "<Keyboard>/escape", "action": "Cancel" },
+                { "name": "", "id": "e2bb32ea-d4f8-4323-a17a-65417dfe0db8", "path": "<Gamepad>/buttonEast", "action": "Cancel" },
+                { "name": "", "id": "954f8041-4f52-45ab-b34f-4833f319fa84", "path": "<Mouse>/position", "action": "Point" },
+                { "name": "", "id": "5ad95d92-1d4d-4e64-9ad0-b96e0575cf15", "path": "<Mouse>/leftButton", "action": "Click" },
+                { "name": "", "id": "ca98dbb0-ccb2-4b65-9ec8-b8c854fce89d", "path": "<Mouse>/scroll", "action": "ScrollWheel" }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Keyboard&Mouse",
+            "bindingGroup": "Keyboard&Mouse",
+            "devices": [
+                { "devicePath": "<Keyboard>", "isOptional": false, "isOR": false },
+                { "devicePath": "<Mouse>", "isOptional": false, "isOR": false }
+            ]
+        },
+        {
+            "name": "Gamepad",
+            "bindingGroup": "Gamepad",
+            "devices": [
+                { "devicePath": "<Gamepad>", "isOptional": false, "isOR": false }
+            ]
+        }
+    ]
+}

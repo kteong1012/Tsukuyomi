@@ -1,0 +1,59 @@
+.screen.settings-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(8, 12, 18, 0.65);
+}
+
+.settings-card {
+    width: 520px;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #182336;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.settings-title {
+    color: #eef4ff;
+    unity-font-style: bold;
+    font-size: 30px;
+    margin-bottom: 14px;
+}
+
+.settings-row {
+    margin-bottom: 12px;
+}
+
+.settings-label {
+    color: #b4c4de;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.settings-control {
+    color: #eff5ff;
+}
+
+.settings-close-button {
+    margin-top: 8px;
+    height: 44px;
+    color: #f5f8ff;
+    background-color: #264361;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}

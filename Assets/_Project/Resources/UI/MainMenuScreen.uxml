@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement name="main-menu-root" class="screen main-menu">
+        <ui:Label text="TSUKUYOMI" class="main-menu-title" />
+        <ui:Label name="build-label" text="Build: -/-" class="main-menu-build-label" />
+        <ui:VisualElement class="main-menu-actions">
+            <ui:Button name="start-btn" text="Start Game" class="main-menu-button" />
+            <ui:Button name="settings-btn" text="Settings" class="main-menu-button" />
+            <ui:Button name="ugui-fallback-btn" text="uGUI Fallback Demo" class="main-menu-button secondary" />
+            <ui:Button name="quit-btn" text="Quit" class="main-menu-button danger" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

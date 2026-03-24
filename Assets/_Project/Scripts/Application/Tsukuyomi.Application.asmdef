@@ -1,0 +1,17 @@
+{
+  "name": "Tsukuyomi.Application",
+  "rootNamespace": "Tsukuyomi.Application",
+  "references": [
+    "Tsukuyomi.Domain",
+    "Tsukuyomi.Generated.Config"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
