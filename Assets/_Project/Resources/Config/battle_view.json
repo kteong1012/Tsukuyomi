@@ -1,0 +1,47 @@
+{
+  "battleWorld": {
+    "boardCenterX": 0.0,
+    "playerRowY": -2.0,
+    "enemyRowY": 2.0,
+    "laneSpacingX": 1.25,
+    "benchRowY": -3.4,
+    "unitScale": 1.0,
+    "attackHopDistance": 0.5,
+    "attackHopDuration": 0.12,
+    "turnInterval": 0.34,
+    "hitFlashDuration": 0.08,
+    "postBattleHold": 0.8
+  },
+  "cameraRig": {
+    "positionX": 0.0,
+    "positionY": 0.0,
+    "positionZ": -10.0,
+    "orthographicSize": 5.4,
+    "battleZoomSize": 4.8,
+    "smoothTime": 0.16,
+    "shakeAmplitude": 0.12,
+    "shakeDuration": 0.14
+  },
+  "unitVisuals": [
+    {
+      "unitId": "swordsman",
+      "spriteResourcePath": "Art/Units/swordsman"
+    },
+    {
+      "unitId": "mage",
+      "spriteResourcePath": "Art/Units/mage"
+    },
+    {
+      "unitId": "priest",
+      "spriteResourcePath": "Art/Units/priest"
+    },
+    {
+      "unitId": "berserker",
+      "spriteResourcePath": "Art/Units/berserker"
+    }
+  ],
+  "fallbackVisual": {
+    "spriteResourcePath": "Art/Units/fallback_unit",
+    "tintHex": "#A9B6CC"
+  }
+}

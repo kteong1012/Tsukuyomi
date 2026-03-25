@@ -18,9 +18,10 @@ Use `autochess_design_request.template.json` in the same folder as the request s
 ## Files AI Should Edit
 
 1. `Assets/_Project/Config/autochess_content.json`
-2. `Assets/_Project/ConfigSchema/autochess_content.schema.json` (only when adding new fields or effect types)
-3. `Assets/_Project/Scripts/Application/AutoChess/*.cs` (only when mechanics need new runtime behavior)
-4. `Assets/_Project/Scripts/Presentation/UI/AutoChessViewBinder.cs` (only when UI interaction changes)
+2. `Assets/_Project/Config/battle_view.json` (sprite path mapping and camera tuning)
+3. `Assets/_Project/ConfigSchema/autochess_content.schema.json` (only when adding new fields or effect types)
+4. `Assets/_Project/Scripts/Application/AutoChess/*.cs` (only when mechanics need new runtime behavior)
+5. `Assets/_Project/Scripts/Presentation/UI/AutoChessViewBinder.cs` (only when UI interaction changes)
 
 ## Validation Pipeline
 

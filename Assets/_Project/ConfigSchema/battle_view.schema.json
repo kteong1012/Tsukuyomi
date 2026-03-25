@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BattleViewConfig",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "battleWorld",
+    "cameraRig",
+    "unitVisuals",
+    "fallbackVisual"
+  ],
+  "properties": {
+    "battleWorld": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "boardCenterX",
+        "playerRowY",
+        "enemyRowY",
+        "laneSpacingX",
+        "benchRowY",
+        "unitScale",
+        "attackHopDistance",
+        "attackHopDuration",
+        "turnInterval",
+        "hitFlashDuration",
+        "postBattleHold"
+      ],
+      "properties": {
+        "boardCenterX": { "type": "number" },
+        "playerRowY": { "type": "number" },
+        "enemyRowY": { "type": "number" },
+        "laneSpacingX": { "type": "number" },
+        "benchRowY": { "type": "number" },
+        "unitScale": { "type": "number" },
+        "attackHopDistance": { "type": "number" },
+        "attackHopDuration": { "type": "number" },
+        "turnInterval": { "type": "number" },
+        "hitFlashDuration": { "type": "number" },
+        "postBattleHold": { "type": "number" }
+      }
+    },
+    "cameraRig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "positionX",
+        "positionY",
+        "positionZ",
+        "orthographicSize",
+        "battleZoomSize",
+        "smoothTime",
+        "shakeAmplitude",
+        "shakeDuration"
+      ],
+      "properties": {
+        "positionX": { "type": "number" },
+        "positionY": { "type": "number" },
+        "positionZ": { "type": "number" },
+        "orthographicSize": { "type": "number" },
+        "battleZoomSize": { "type": "number" },
+        "smoothTime": { "type": "number" },
+        "shakeAmplitude": { "type": "number" },
+        "shakeDuration": { "type": "number" }
+      }
+    },
+    "unitVisuals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "unitId",
+          "spriteResourcePath"
+        ],
+        "properties": {
+          "unitId": { "type": "string" },
+          "spriteResourcePath": { "type": "string" }
+        }
+      }
+    },
+    "fallbackVisual": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "spriteResourcePath",
+        "tintHex"
+      ],
+      "properties": {
+        "spriteResourcePath": { "type": "string" },
+        "tintHex": { "type": "string" }
+      }
+    }
+  }
+}

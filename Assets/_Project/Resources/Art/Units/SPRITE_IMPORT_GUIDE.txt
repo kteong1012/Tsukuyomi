@@ -1,0 +1,19 @@
+Drop your unit sprites into this folder and keep file names aligned with battle_view.json.
+
+Default mapping:
+- swordsman.png
+- mage.png
+- priest.png
+- berserker.png
+
+Expected Resources paths:
+- Art/Units/swordsman
+- Art/Units/mage
+- Art/Units/priest
+- Art/Units/berserker
+
+Import suggestion:
+- Sprite Mode: Single
+- Pixels Per Unit: 64 (or keep consistent across all units)
+- Pivot: Center
+- Filter Mode: Point (pixel art) or Bilinear (painted style)

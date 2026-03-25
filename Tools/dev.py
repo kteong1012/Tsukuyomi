@@ -122,6 +122,8 @@ def validate_single_config(config_name: str, config_path: Path, schema_path: Pat
 def validate_semantic_rules(config_name: str, config: Any) -> list[str]:
     if config_name == "autochess_content":
         return validate_autochess_semantics(config)
+    if config_name == "battle_view":
+        return validate_battle_view_semantics(config)
     if config_name == "game_settings":
         return validate_game_settings_semantics(config)
     if config_name == "localization_texts":
@@ -239,6 +241,92 @@ def validate_autochess_semantics(config: Any) -> list[str]:
                             f"$.waves[{wave_idx}].enemyUnitIds[{enemy_idx}]: "
                             f"references missing unit '{enemy}'"
                         )
+
+    return errors
+
+
+def validate_positive_number(value: Any, path: str, errors: list[str]) -> None:
+    if not isinstance(value, (int, float)) or isinstance(value, bool):
+        errors.append(f"{path}: expected number")
+        return
+    if float(value) <= 0.0:
+        errors.append(f"{path}: must be > 0")
+
+
+def validate_battle_view_semantics(config: Any) -> list[str]:
+    if not isinstance(config, dict):
+        return ["$: expected object"]
+
+    errors: list[str] = []
+    world = config.get("battleWorld", {})
+    if isinstance(world, dict):
+        validate_positive_number(world.get("laneSpacingX"), "$.battleWorld.laneSpacingX", errors)
+        validate_positive_number(world.get("unitScale"), "$.battleWorld.unitScale", errors)
+        validate_positive_number(world.get("attackHopDistance"), "$.battleWorld.attackHopDistance", errors)
+        validate_positive_number(world.get("attackHopDuration"), "$.battleWorld.attackHopDuration", errors)
+        validate_positive_number(world.get("turnInterval"), "$.battleWorld.turnInterval", errors)
+        validate_positive_number(world.get("hitFlashDuration"), "$.battleWorld.hitFlashDuration", errors)
+        validate_positive_number(world.get("postBattleHold"), "$.battleWorld.postBattleHold", errors)
+    else:
+        errors.append("$.battleWorld: expected object")
+
+    camera = config.get("cameraRig", {})
+    if isinstance(camera, dict):
+        validate_positive_number(camera.get("orthographicSize"), "$.cameraRig.orthographicSize", errors)
+        validate_positive_number(camera.get("battleZoomSize"), "$.cameraRig.battleZoomSize", errors)
+        validate_positive_number(camera.get("smoothTime"), "$.cameraRig.smoothTime", errors)
+        validate_positive_number(camera.get("shakeAmplitude"), "$.cameraRig.shakeAmplitude", errors)
+        validate_positive_number(camera.get("shakeDuration"), "$.cameraRig.shakeDuration", errors)
+    else:
+        errors.append("$.cameraRig: expected object")
+
+    visuals = config.get("unitVisuals", [])
+    unit_ids: set[str] = set()
+    if isinstance(visuals, list):
+        for idx, item in enumerate(visuals):
+            if not isinstance(item, dict):
+                errors.append(f"$.unitVisuals[{idx}]: expected object")
+                continue
+
+            unit_id = str(item.get("unitId", "")).strip()
+            path = str(item.get("spriteResourcePath", "")).strip()
+            if not unit_id:
+                errors.append(f"$.unitVisuals[{idx}].unitId: must not be empty")
+                continue
+            if unit_id in unit_ids:
+                errors.append(f"$.unitVisuals[{idx}].unitId: duplicate unit id '{unit_id}'")
+            unit_ids.add(unit_id)
+
+            if not path:
+                errors.append(f"$.unitVisuals[{idx}].spriteResourcePath: must not be empty")
+    else:
+        errors.append("$.unitVisuals: expected array")
+
+    fallback = config.get("fallbackVisual", {})
+    if isinstance(fallback, dict):
+        fallback_path = str(fallback.get("spriteResourcePath", "")).strip()
+        fallback_tint = str(fallback.get("tintHex", "")).strip()
+        if not fallback_path:
+            errors.append("$.fallbackVisual.spriteResourcePath: must not be empty")
+        if not fallback_tint.startswith("#"):
+            errors.append("$.fallbackVisual.tintHex: must start with '#'")
+    else:
+        errors.append("$.fallbackVisual: expected object")
+
+    autochess_path = CONFIG_DIR / "autochess_content.json"
+    if autochess_path.exists():
+        autochess = load_json(autochess_path)
+        units = autochess.get("units", []) if isinstance(autochess, dict) else []
+        known_unit_ids = {
+            str(item.get("id", "")).strip()
+            for item in units
+            if isinstance(item, dict) and str(item.get("id", "")).strip()
+        }
+        for unit_id in unit_ids:
+            if unit_id not in known_unit_ids:
+                errors.append(
+                    f"$.unitVisuals: unit id '{unit_id}' does not exist in autochess_content.units"
+                )
 
     return errors
 

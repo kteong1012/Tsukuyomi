@@ -7,6 +7,7 @@ using Tsukuyomi.Application.Config;
 using Tsukuyomi.Application.Localization;
 using Tsukuyomi.Application.Settings;
 using Tsukuyomi.Application.UI;
+using Tsukuyomi.Bootstrap.World;
 using Tsukuyomi.Domain.UI;
 using Tsukuyomi.Generated.Config;
 using Tsukuyomi.Infrastructure.Config;
@@ -27,6 +28,7 @@ namespace Tsukuyomi.Bootstrap
 
         private IConfigHotReloadService _hotReloadService;
         private IUiNavigator _uiNavigator;
+        private AutoChessBattleWorldController _battleWorldController;
         private PanelSettings _runtimePanelSettings;
         private GameObject _runtimeUiRoot;
         private bool _isComposed;
@@ -78,6 +80,7 @@ namespace Tsukuyomi.Bootstrap
         private void OnDestroy()
         {
             _uiNavigator?.Dispose();
+            _battleWorldController?.Cleanup();
             _hotReloadService?.Dispose();
 
             if (_runtimePanelSettings != null)
@@ -142,6 +145,11 @@ namespace Tsukuyomi.Bootstrap
                 validator,
                 ConfigPaths.GetConfigSourcePath("localization_texts"),
                 ConfigPaths.GetSchemaSourcePath("localization_texts"));
+            var battleViewRepository = new JsonConfigRepository<BattleViewConfig>(
+                "battle_view",
+                validator,
+                ConfigPaths.GetConfigSourcePath("battle_view"),
+                ConfigPaths.GetSchemaSourcePath("battle_view"));
             var settingsStore = new PlayerPrefsSettingsStore("tsukuyomi.settings.");
             var settingsService = new GameSettingsService(settingsRepository, _hotReloadService, settingsStore);
             var autoChessService = new AutoChessGameService(autoChessRepository, _hotReloadService);
@@ -163,9 +171,24 @@ namespace Tsukuyomi.Bootstrap
                 uguiFallbackHost);
 
             ProjectRuntime.Initialize(_uiNavigator, settingsService, autoChessService, localizationService);
+            var battleWorldController = EnsureBattleWorldController();
+            battleWorldController.Initialize(autoChessService, _uiNavigator, battleViewRepository, _hotReloadService);
 
             var defaultScreen = ParseDefaultScreen(settingsService.Data?.ui?.defaultScreen);
             _uiNavigator.Show(defaultScreen);
+        }
+
+        private AutoChessBattleWorldController EnsureBattleWorldController()
+        {
+            if (_battleWorldController != null)
+            {
+                return _battleWorldController;
+            }
+
+            var controllerObject = new GameObject("AutoChessBattleWorldController");
+            controllerObject.transform.SetParent(transform, false);
+            _battleWorldController = controllerObject.AddComponent<AutoChessBattleWorldController>();
+            return _battleWorldController;
         }
 
         private static void EnsureInputEventSystem()

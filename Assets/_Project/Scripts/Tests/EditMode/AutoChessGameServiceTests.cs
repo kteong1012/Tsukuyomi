@@ -33,6 +33,10 @@ namespace Tsukuyomi.Tests.EditMode
             Assert.That(outcome, Is.Not.EqualTo(AutoChessBattleOutcome.None));
             Assert.That(afterBattle.round, Is.EqualTo(2));
             Assert.That(afterBattle.battleLog.Length, Is.GreaterThan(0));
+            Assert.That(afterBattle.battleReplay.replayId, Is.GreaterThan(0));
+            Assert.That(afterBattle.battleReplay.playerUnits.Length, Is.GreaterThan(0));
+            Assert.That(afterBattle.battleReplay.enemyUnits.Length, Is.GreaterThan(0));
+            Assert.That(afterBattle.battleReplay.events.Length, Is.GreaterThan(0));
         }
 
         [Test]

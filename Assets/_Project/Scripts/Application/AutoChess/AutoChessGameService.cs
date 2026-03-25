@@ -26,6 +26,8 @@ namespace Tsukuyomi.Application.AutoChess
         private int _hp;
         private string _battleSummary = "Ready";
         private AutoChessBattleOutcome _lastBattleOutcome = AutoChessBattleOutcome.None;
+        private AutoChessBattleReplayState _battleReplay = new();
+        private int _nextReplayId = 1;
 
         public AutoChessGameService(
             IConfigRepository<AutoChessContentConfig> repository,
@@ -52,6 +54,7 @@ namespace Tsukuyomi.Application.AutoChess
             _hp = _content.metadata.startingHp;
             _battleSummary = "Draft your team and start battle.";
             _lastBattleOutcome = AutoChessBattleOutcome.None;
+            _battleReplay = CreateEmptyReplay();
             _battleLog.Clear();
 
             _board = new OwnedUnit[Math.Max(1, _content.metadata.boardSize)];
@@ -194,13 +197,25 @@ namespace Tsukuyomi.Application.AutoChess
             EnsureContentLoaded();
             _battleLog.Clear();
 
-            var playerTeam = BuildTeamFromOwnedUnits(_board, "Player");
-            var enemyTeam = BuildEnemyTeamForRound(_round);
+            var nextCombatId = 1;
+            var playerTeam = BuildTeamFromOwnedUnits(_board, isPlayer: true, ref nextCombatId);
+            var enemyTeam = BuildEnemyTeamForRound(_round, ref nextCombatId);
+            var replayEvents = new List<AutoChessReplayEventState>();
+            var replayPlayerUnits = BuildReplayUnits(playerTeam);
+            var replayEnemyUnits = BuildReplayUnits(enemyTeam);
 
             if (playerTeam.Count == 0)
             {
                 _battleLog.Add("No units on board. Automatic defeat.");
                 ResolveLose(enemyTeam.Count);
+                _battleReplay = new AutoChessBattleReplayState
+                {
+                    replayId = _nextReplayId++,
+                    outcome = _lastBattleOutcome,
+                    playerUnits = replayPlayerUnits,
+                    enemyUnits = replayEnemyUnits,
+                    events = System.Array.Empty<AutoChessReplayEventState>()
+                };
                 PublishSnapshot();
                 return _lastBattleOutcome;
             }
@@ -211,13 +226,13 @@ namespace Tsukuyomi.Application.AutoChess
 
             for (var turn = 1; turn <= maxTurns; turn++)
             {
-                ExecuteTurn(turn, playerTeam, enemyTeam, ref playerCursor);
+                ExecuteTurn(turn, playerTeam, enemyTeam, ref playerCursor, replayEvents);
                 if (!HasAlive(enemyTeam))
                 {
                     break;
                 }
 
-                ExecuteTurn(turn, enemyTeam, playerTeam, ref enemyCursor);
+                ExecuteTurn(turn, enemyTeam, playerTeam, ref enemyCursor, replayEvents);
                 if (!HasAlive(playerTeam))
                 {
                     break;
@@ -232,6 +247,15 @@ namespace Tsukuyomi.Application.AutoChess
             {
                 ResolveLose(CountAlive(enemyTeam));
             }
+
+            _battleReplay = new AutoChessBattleReplayState
+            {
+                replayId = _nextReplayId++,
+                outcome = _lastBattleOutcome,
+                playerUnits = replayPlayerUnits,
+                enemyUnits = replayEnemyUnits,
+                events = replayEvents.ToArray()
+            };
 
             _round++;
             RollShop();
@@ -259,7 +283,12 @@ namespace Tsukuyomi.Application.AutoChess
             _battleLog.Add("Battle result: LOSE");
         }
 
-        private void ExecuteTurn(int turn, List<CombatUnit> actingTeam, List<CombatUnit> defendingTeam, ref int cursor)
+        private void ExecuteTurn(
+            int turn,
+            List<CombatUnit> actingTeam,
+            List<CombatUnit> defendingTeam,
+            ref int cursor,
+            List<AutoChessReplayEventState> replayEvents)
         {
             var actor = NextAlive(actingTeam, ref cursor);
             if (actor == null)
@@ -275,7 +304,7 @@ namespace Tsukuyomi.Application.AutoChess
 
             if (actor.skill != null && actor.mana >= actor.skill.manaCost)
             {
-                CastSkill(actor, target, turn);
+                CastSkill(actor, target, turn, replayEvents);
                 actor.mana = 0;
             }
             else
@@ -286,6 +315,16 @@ namespace Tsukuyomi.Application.AutoChess
                 target.mana += Math.Max(1, target.manaPerAttack / 2);
                 _battleLog.Add(
                     $"T{turn}: {actor.displayName} attacks {target.displayName} for {damage} (target HP: {target.hp}).");
+                replayEvents.Add(new AutoChessReplayEventState
+                {
+                    turn = turn,
+                    actionType = AutoChessReplayActionType.Attack,
+                    actorCombatId = actor.combatId,
+                    targetCombatId = target.combatId,
+                    value = damage,
+                    targetHpAfter = target.hp,
+                    targetDefeated = target.hp <= 0
+                });
             }
 
             if (actor.buffTurnsRemaining > 0)
@@ -299,7 +338,11 @@ namespace Tsukuyomi.Application.AutoChess
             }
         }
 
-        private void CastSkill(CombatUnit actor, CombatUnit target, int turn)
+        private void CastSkill(
+            CombatUnit actor,
+            CombatUnit target,
+            int turn,
+            List<AutoChessReplayEventState> replayEvents)
         {
             switch (actor.skill.effectType)
             {
@@ -309,6 +352,17 @@ namespace Tsukuyomi.Application.AutoChess
                     target.hp = Math.Max(0, target.hp - damage);
                     _battleLog.Add(
                         $"T{turn}: {actor.displayName} casts {actor.skill.name}, dealing {damage} to {target.displayName} (HP: {target.hp}).");
+                    replayEvents.Add(new AutoChessReplayEventState
+                    {
+                        turn = turn,
+                        actionType = AutoChessReplayActionType.SkillDamage,
+                        actorCombatId = actor.combatId,
+                        targetCombatId = target.combatId,
+                        value = damage,
+                        targetHpAfter = target.hp,
+                        targetDefeated = target.hp <= 0,
+                        skillName = actor.skill.name ?? string.Empty
+                    });
                     break;
                 }
                 case "HealSelf":
@@ -317,6 +371,17 @@ namespace Tsukuyomi.Application.AutoChess
                     actor.hp = Math.Min(actor.maxHp, actor.hp + heal);
                     _battleLog.Add(
                         $"T{turn}: {actor.displayName} casts {actor.skill.name}, healing {heal} (HP: {actor.hp}).");
+                    replayEvents.Add(new AutoChessReplayEventState
+                    {
+                        turn = turn,
+                        actionType = AutoChessReplayActionType.SkillHeal,
+                        actorCombatId = actor.combatId,
+                        targetCombatId = actor.combatId,
+                        value = heal,
+                        targetHpAfter = actor.hp,
+                        targetDefeated = false,
+                        skillName = actor.skill.name ?? string.Empty
+                    });
                     break;
                 }
                 case "BuffAttackSelf":
@@ -325,6 +390,17 @@ namespace Tsukuyomi.Application.AutoChess
                     actor.buffTurnsRemaining = Math.Max(1, actor.skill.durationTurns);
                     _battleLog.Add(
                         $"T{turn}: {actor.displayName} casts {actor.skill.name}, gaining +{actor.tempAttackBonus} attack for {actor.buffTurnsRemaining} turns.");
+                    replayEvents.Add(new AutoChessReplayEventState
+                    {
+                        turn = turn,
+                        actionType = AutoChessReplayActionType.SkillBuff,
+                        actorCombatId = actor.combatId,
+                        targetCombatId = actor.combatId,
+                        value = actor.tempAttackBonus,
+                        targetHpAfter = actor.hp,
+                        targetDefeated = false,
+                        skillName = actor.skill.name ?? string.Empty
+                    });
                     break;
                 }
                 default:
@@ -386,7 +462,7 @@ namespace Tsukuyomi.Application.AutoChess
             return count;
         }
 
-        private List<CombatUnit> BuildTeamFromOwnedUnits(OwnedUnit[] source, string side)
+        private List<CombatUnit> BuildTeamFromOwnedUnits(OwnedUnit[] source, bool isPlayer, ref int nextCombatId)
         {
             var result = new List<CombatUnit>();
             for (var i = 0; i < source.Length; i++)
@@ -399,14 +475,14 @@ namespace Tsukuyomi.Application.AutoChess
 
                 if (_unitById.TryGetValue(owned.unitId, out var unitDefinition))
                 {
-                    result.Add(CreateCombatUnit(unitDefinition, side));
+                    result.Add(CreateCombatUnit(unitDefinition, isPlayer, nextCombatId++));
                 }
             }
 
             return result;
         }
 
-        private List<CombatUnit> BuildEnemyTeamForRound(int round)
+        private List<CombatUnit> BuildEnemyTeamForRound(int round, ref int nextCombatId)
         {
             var result = new List<CombatUnit>();
 
@@ -416,7 +492,7 @@ namespace Tsukuyomi.Application.AutoChess
                 {
                     if (_unitById.TryGetValue(wave.enemyUnitIds[i], out var definition))
                     {
-                        result.Add(CreateCombatUnit(definition, "Enemy"));
+                        result.Add(CreateCombatUnit(definition, isPlayer: false, nextCombatId++));
                     }
                 }
             }
@@ -432,14 +508,14 @@ namespace Tsukuyomi.Application.AutoChess
                 var unitId = DrawRandomUnitId();
                 if (_unitById.TryGetValue(unitId, out var definition))
                 {
-                    result.Add(CreateCombatUnit(definition, "Enemy"));
+                    result.Add(CreateCombatUnit(definition, isPlayer: false, nextCombatId++));
                 }
             }
 
             return result;
         }
 
-        private CombatUnit CreateCombatUnit(UnitsItemConfig unitDefinition, string side)
+        private CombatUnit CreateCombatUnit(UnitsItemConfig unitDefinition, bool isPlayer, int combatId)
         {
             SkillsItemConfig skill = null;
             if (!string.IsNullOrWhiteSpace(unitDefinition.skillId))
@@ -449,7 +525,9 @@ namespace Tsukuyomi.Application.AutoChess
 
             return new CombatUnit
             {
-                side = side,
+                side = isPlayer ? "Player" : "Enemy",
+                isPlayerSide = isPlayer,
+                combatId = combatId,
                 unitId = unitDefinition.id,
                 displayName = unitDefinition.name,
                 hp = Math.Max(1, unitDefinition.maxHp),
@@ -459,6 +537,26 @@ namespace Tsukuyomi.Application.AutoChess
                 mana = 0,
                 skill = skill
             };
+        }
+
+        private static AutoChessReplayUnitState[] BuildReplayUnits(List<CombatUnit> team)
+        {
+            var result = new AutoChessReplayUnitState[team.Count];
+            for (var i = 0; i < team.Count; i++)
+            {
+                var unit = team[i];
+                result[i] = new AutoChessReplayUnitState
+                {
+                    combatId = unit.combatId,
+                    isPlayerSide = unit.isPlayerSide,
+                    unitId = unit.unitId,
+                    displayName = unit.displayName,
+                    maxHp = unit.maxHp,
+                    startingHp = unit.hp
+                };
+            }
+
+            return result;
         }
 
         private void RollShop()
@@ -539,6 +637,18 @@ namespace Tsukuyomi.Application.AutoChess
             };
         }
 
+        private AutoChessBattleReplayState CreateEmptyReplay()
+        {
+            return new AutoChessBattleReplayState
+            {
+                replayId = _nextReplayId++,
+                outcome = AutoChessBattleOutcome.None,
+                playerUnits = System.Array.Empty<AutoChessReplayUnitState>(),
+                enemyUnits = System.Array.Empty<AutoChessReplayUnitState>(),
+                events = System.Array.Empty<AutoChessReplayEventState>()
+            };
+        }
+
         private void PublishSnapshot()
         {
             Snapshot = BuildSnapshot();
@@ -558,7 +668,69 @@ namespace Tsukuyomi.Application.AutoChess
                 shopOffers = BuildShopOffers(),
                 boardSlots = BuildBoardSlots(),
                 benchSlots = BuildBenchSlots(),
-                battleLog = _battleLog.ToArray()
+                battleLog = _battleLog.ToArray(),
+                battleReplay = CloneBattleReplay(_battleReplay)
+            };
+        }
+
+        private static AutoChessBattleReplayState CloneBattleReplay(AutoChessBattleReplayState replay)
+        {
+            replay ??= new AutoChessBattleReplayState();
+
+            var playerUnits = new AutoChessReplayUnitState[replay.playerUnits?.Length ?? 0];
+            for (var i = 0; i < playerUnits.Length; i++)
+            {
+                var source = replay.playerUnits[i];
+                playerUnits[i] = new AutoChessReplayUnitState
+                {
+                    combatId = source.combatId,
+                    isPlayerSide = source.isPlayerSide,
+                    unitId = source.unitId,
+                    displayName = source.displayName,
+                    maxHp = source.maxHp,
+                    startingHp = source.startingHp
+                };
+            }
+
+            var enemyUnits = new AutoChessReplayUnitState[replay.enemyUnits?.Length ?? 0];
+            for (var i = 0; i < enemyUnits.Length; i++)
+            {
+                var source = replay.enemyUnits[i];
+                enemyUnits[i] = new AutoChessReplayUnitState
+                {
+                    combatId = source.combatId,
+                    isPlayerSide = source.isPlayerSide,
+                    unitId = source.unitId,
+                    displayName = source.displayName,
+                    maxHp = source.maxHp,
+                    startingHp = source.startingHp
+                };
+            }
+
+            var events = new AutoChessReplayEventState[replay.events?.Length ?? 0];
+            for (var i = 0; i < events.Length; i++)
+            {
+                var source = replay.events[i];
+                events[i] = new AutoChessReplayEventState
+                {
+                    turn = source.turn,
+                    actionType = source.actionType,
+                    actorCombatId = source.actorCombatId,
+                    targetCombatId = source.targetCombatId,
+                    value = source.value,
+                    targetHpAfter = source.targetHpAfter,
+                    skillName = source.skillName,
+                    targetDefeated = source.targetDefeated
+                };
+            }
+
+            return new AutoChessBattleReplayState
+            {
+                replayId = replay.replayId,
+                outcome = replay.outcome,
+                playerUnits = playerUnits,
+                enemyUnits = enemyUnits,
+                events = events
             };
         }
 
@@ -796,6 +968,8 @@ namespace Tsukuyomi.Application.AutoChess
         private sealed class CombatUnit
         {
             public string side = string.Empty;
+            public bool isPlayerSide;
+            public int combatId;
             public string unitId = string.Empty;
             public string displayName = string.Empty;
             public int hp;

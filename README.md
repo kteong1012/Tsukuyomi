@@ -30,6 +30,7 @@ AI-first Unity project scaffold with script-driven architecture, JSON-first conf
 - Generated C#: `Assets/_Project/Scripts/Generated/Config/*.g.cs`
 - Runtime config copies: `Assets/_Project/Resources/Config/*.json`
 - Localization source: `Assets/_Project/Config/localization_texts.json` (`en` / `zh-Hans`)
+- Battle world view source: `Assets/_Project/Config/battle_view.json`
 
 ## Layering
 - `Tsukuyomi.Domain`
@@ -51,3 +52,11 @@ Recommended loop:
 2. Ask AI to apply them by updating `autochess_content.json` (and schema/code only when needed).
 3. Run `python Tools/dev.py validate-config` and `python Tools/dev.py generate-config`.
 4. Run `python Tools/dev.py guard-architecture` and `dotnet build Tsukuyomi.sln`.
+
+## Battle 2D World
+- Visual integration guide:
+  - `Docs/BattleVisualization2D.md`
+- Camera system design:
+  - `Docs/CameraSystem.md`
+- Sprite drop location:
+  - `Assets/_Project/Resources/Art/Units`
