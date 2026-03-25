@@ -27,7 +27,8 @@ namespace Tsukuyomi.Tests.EditMode
                 ui = new UiConfig
                 {
                     defaultScreen = "MainMenu",
-                    theme = "day"
+                    theme = "day",
+                    language = "zh-Hans"
                 }
             };
 
@@ -38,6 +39,7 @@ namespace Tsukuyomi.Tests.EditMode
             Assert.That(copy.audio.masterVolume, Is.EqualTo(source.audio.masterVolume).Within(0.0001f));
             Assert.That(copy.video.fullscreen, Is.EqualTo(source.video.fullscreen));
             Assert.That(copy.video.targetFrameRate, Is.EqualTo(source.video.targetFrameRate));
+            Assert.That(copy.ui.language, Is.EqualTo(source.ui.language));
         }
     }
 }

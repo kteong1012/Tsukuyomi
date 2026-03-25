@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AutoChessContentConfig",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata",
+    "shopRules",
+    "skills",
+    "units",
+    "waves"
+  ],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "startingGold",
+        "startingHp",
+        "benchSize",
+        "boardSize",
+        "shopSlots",
+        "refreshCost",
+        "winGold",
+        "lossHpBase",
+        "maxBattleTurns"
+      ],
+      "properties": {
+        "startingGold": { "type": "integer" },
+        "startingHp": { "type": "integer" },
+        "benchSize": { "type": "integer" },
+        "boardSize": { "type": "integer" },
+        "shopSlots": { "type": "integer" },
+        "refreshCost": { "type": "integer" },
+        "winGold": { "type": "integer" },
+        "lossHpBase": { "type": "integer" },
+        "maxBattleTurns": { "type": "integer" }
+      }
+    },
+    "shopRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "offerUnitIds"
+      ],
+      "properties": {
+        "offerUnitIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "description",
+          "triggerType",
+          "effectType",
+          "power",
+          "manaCost",
+          "durationTurns"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "triggerType": {
+            "type": "string",
+            "enum": [
+              "ActiveWhenManaFull"
+            ]
+          },
+          "effectType": {
+            "type": "string",
+            "enum": [
+              "DamageSingle",
+              "HealSelf",
+              "BuffAttackSelf"
+            ]
+          },
+          "power": { "type": "integer" },
+          "manaCost": { "type": "integer" },
+          "durationTurns": { "type": "integer" }
+        }
+      }
+    },
+    "units": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "cost",
+          "maxHp",
+          "attack",
+          "manaPerAttack",
+          "skillId"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "cost": { "type": "integer" },
+          "maxHp": { "type": "integer" },
+          "attack": { "type": "integer" },
+          "manaPerAttack": { "type": "integer" },
+          "skillId": { "type": "string" }
+        }
+      }
+    },
+    "waves": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "round",
+          "enemyUnitIds"
+        ],
+        "properties": {
+          "round": { "type": "integer" },
+          "enemyUnitIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

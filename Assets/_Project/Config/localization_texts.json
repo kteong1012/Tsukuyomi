@@ -1,0 +1,205 @@
+{
+  "defaultLanguage": "zh-Hans",
+  "languages": [
+    {
+      "code": "en",
+      "displayName": "English"
+    },
+    {
+      "code": "zh-Hans",
+      "displayName": "简体中文"
+    }
+  ],
+  "entries": [
+    {
+      "key": "ui.main.title",
+      "en": "TSUKUYOMI",
+      "zhHans": "月读"
+    },
+    {
+      "key": "ui.main.buildPrefix",
+      "en": "Build",
+      "zhHans": "构建版本"
+    },
+    {
+      "key": "ui.main.start",
+      "en": "Start Game",
+      "zhHans": "开始游戏"
+    },
+    {
+      "key": "ui.main.settings",
+      "en": "Settings",
+      "zhHans": "设置"
+    },
+    {
+      "key": "ui.main.fallback",
+      "en": "uGUI Fallback Demo",
+      "zhHans": "uGUI 兜底演示"
+    },
+    {
+      "key": "ui.main.quit",
+      "en": "Quit",
+      "zhHans": "退出"
+    },
+    {
+      "key": "ui.settings.title",
+      "en": "Settings",
+      "zhHans": "设置"
+    },
+    {
+      "key": "ui.settings.masterVolume",
+      "en": "Master Volume",
+      "zhHans": "主音量"
+    },
+    {
+      "key": "ui.settings.fullscreen",
+      "en": "Fullscreen",
+      "zhHans": "全屏"
+    },
+    {
+      "key": "ui.settings.language",
+      "en": "Language",
+      "zhHans": "语言"
+    },
+    {
+      "key": "ui.settings.close",
+      "en": "Close",
+      "zhHans": "关闭"
+    },
+    {
+      "key": "ui.autochess.roundPrefix",
+      "en": "Round",
+      "zhHans": "回合"
+    },
+    {
+      "key": "ui.autochess.goldPrefix",
+      "en": "Gold",
+      "zhHans": "金币"
+    },
+    {
+      "key": "ui.autochess.hpPrefix",
+      "en": "HP",
+      "zhHans": "生命"
+    },
+    {
+      "key": "ui.autochess.shop",
+      "en": "Shop",
+      "zhHans": "商店"
+    },
+    {
+      "key": "ui.autochess.board",
+      "en": "Board",
+      "zhHans": "棋盘"
+    },
+    {
+      "key": "ui.autochess.bench",
+      "en": "Bench",
+      "zhHans": "备战区"
+    },
+    {
+      "key": "ui.autochess.actions",
+      "en": "Actions",
+      "zhHans": "操作"
+    },
+    {
+      "key": "ui.autochess.battleLog",
+      "en": "Battle Log",
+      "zhHans": "战斗日志"
+    },
+    {
+      "key": "ui.autochess.refreshShop",
+      "en": "Refresh Shop",
+      "zhHans": "刷新商店"
+    },
+    {
+      "key": "ui.autochess.startBattle",
+      "en": "Start Battle",
+      "zhHans": "开始战斗"
+    },
+    {
+      "key": "ui.autochess.sellSelected",
+      "en": "Sell Selected Bench Unit",
+      "zhHans": "出售选中棋子"
+    },
+    {
+      "key": "ui.autochess.newRun",
+      "en": "New Run",
+      "zhHans": "新开一局"
+    },
+    {
+      "key": "ui.autochess.backMenu",
+      "en": "Back To Menu",
+      "zhHans": "返回主菜单"
+    },
+    {
+      "key": "ui.autochess.selection.none",
+      "en": "No bench unit selected",
+      "zhHans": "未选择备战区棋子"
+    },
+    {
+      "key": "ui.autochess.selection.selected",
+      "en": "Selected bench slot: {0} (click board to place)",
+      "zhHans": "已选择备战区槽位：{0}（点击棋盘格上阵）"
+    },
+    {
+      "key": "ui.autochess.offerPrefix",
+      "en": "Offer",
+      "zhHans": "商店槽"
+    },
+    {
+      "key": "ui.autochess.offerEmpty",
+      "en": "Empty",
+      "zhHans": "空"
+    },
+    {
+      "key": "ui.autochess.boardSlotPrefix",
+      "en": "Board",
+      "zhHans": "棋盘位"
+    },
+    {
+      "key": "ui.autochess.benchSlotPrefix",
+      "en": "Bench",
+      "zhHans": "备战位"
+    },
+    {
+      "key": "ui.autochess.costPrefix",
+      "en": "Cost",
+      "zhHans": "费用"
+    },
+    {
+      "key": "ui.autochess.atkShortPrefix",
+      "en": "ATK",
+      "zhHans": "攻"
+    },
+    {
+      "key": "ui.autochess.hpShortPrefix",
+      "en": "HP",
+      "zhHans": "血"
+    },
+    {
+      "key": "ui.autochess.noSkill",
+      "en": "No skill",
+      "zhHans": "无技能"
+    },
+    {
+      "key": "ui.autochess.battleLog.empty",
+      "en": "Battle log is empty. Start battle to see combat details.",
+      "zhHans": "战斗日志为空。开始战斗后可查看详细记录。"
+    },
+    {
+      "key": "ui.common.empty",
+      "en": "Empty",
+      "zhHans": "空"
+    },
+    {
+      "key": "ui.language.en",
+      "en": "English",
+      "zhHans": "英语"
+    },
+    {
+      "key": "ui.language.zh-Hans",
+      "en": "Simplified Chinese",
+      "zhHans": "简体中文"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LocalizationTextsConfig",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "defaultLanguage",
+    "languages",
+    "entries"
+  ],
+  "properties": {
+    "defaultLanguage": {
+      "type": "string",
+      "enum": [
+        "en",
+        "zh-Hans"
+      ]
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "displayName"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "en",
+              "zh-Hans"
+            ]
+          },
+          "displayName": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "en",
+          "zhHans"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "en": {
+            "type": "string"
+          },
+          "zhHans": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

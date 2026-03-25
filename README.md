@@ -15,6 +15,9 @@ AI-first Unity project scaffold with script-driven architecture, JSON-first conf
   - `python Tools/dev.py run-tests`
 - Run smoke UI tests:
   - `python Tools/dev.py smoke-ui`
+- Full compile pass:
+  - `dotnet clean Tsukuyomi.sln`
+  - `dotnet build Tsukuyomi.sln`
 
 ## UI Strategy
 - Default runtime UI: `UI Toolkit` (`UXML + USS + C# binders`)
@@ -26,6 +29,7 @@ AI-first Unity project scaffold with script-driven architecture, JSON-first conf
 - JSON Schema: `Assets/_Project/ConfigSchema/*.schema.json`
 - Generated C#: `Assets/_Project/Scripts/Generated/Config/*.g.cs`
 - Runtime config copies: `Assets/_Project/Resources/Config/*.json`
+- Localization source: `Assets/_Project/Config/localization_texts.json` (`en` / `zh-Hans`)
 
 ## Layering
 - `Tsukuyomi.Domain`
@@ -33,3 +37,17 @@ AI-first Unity project scaffold with script-driven architecture, JSON-first conf
 - `Tsukuyomi.Infrastructure`
 - `Tsukuyomi.Presentation`
 - `Tsukuyomi.Bootstrap`
+
+## AutoChess + AI Workflow
+- Runtime content file:
+  - `Assets/_Project/Config/autochess_content.json`
+- AI request template:
+  - `Docs/autochess_design_request.template.json`
+- Workflow guide:
+  - `Docs/AutoChessAIWorkflow.md`
+
+Recommended loop:
+1. Write requirements in the request template (goal, skills, units, waves, expected UI state, acceptance cases).
+2. Ask AI to apply them by updating `autochess_content.json` (and schema/code only when needed).
+3. Run `python Tools/dev.py validate-config` and `python Tools/dev.py generate-config`.
+4. Run `python Tools/dev.py guard-architecture` and `dotnet build Tsukuyomi.sln`.

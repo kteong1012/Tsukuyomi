@@ -1,0 +1,38 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement name="autochess-root" class="screen autochess-root">
+        <ui:VisualElement class="autochess-topbar">
+            <ui:Label name="round-label" text="Round: 1" class="stat-chip" />
+            <ui:Label name="gold-label" text="Gold: 0" class="stat-chip" />
+            <ui:Label name="hp-label" text="HP: 0" class="stat-chip" />
+            <ui:Label name="battle-summary-label" text="Ready" class="battle-summary" />
+        </ui:VisualElement>
+
+        <ui:VisualElement class="autochess-main">
+            <ui:VisualElement class="autochess-panel">
+                <ui:Label name="shop-title-label" text="Shop" class="panel-title" />
+                <ui:VisualElement name="shop-container" class="slot-wrap" />
+                <ui:Button name="refresh-shop-btn" text="Refresh Shop" class="action-button secondary" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="autochess-panel">
+                <ui:Label name="board-title-label" text="Board" class="panel-title" />
+                <ui:VisualElement name="board-container" class="slot-wrap board-wrap" />
+                <ui:Label name="bench-title-label" text="Bench" class="panel-title" />
+                <ui:VisualElement name="bench-container" class="slot-wrap bench-wrap" />
+                <ui:Label name="selection-label" text="No bench unit selected" class="selection-label" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="autochess-panel actions-panel">
+                <ui:Label name="actions-title-label" text="Actions" class="panel-title" />
+                <ui:Button name="start-battle-btn" text="Start Battle" class="action-button primary" />
+                <ui:Button name="sell-selected-btn" text="Sell Selected Bench Unit" class="action-button" />
+                <ui:Button name="new-run-btn" text="New Run" class="action-button secondary" />
+                <ui:Button name="back-btn" text="Back To Menu" class="action-button danger" />
+                <ui:Label name="battle-log-title-label" text="Battle Log" class="panel-title log-title" />
+                <ui:ScrollView class="battle-log-scroll">
+                    <ui:Label name="battle-log-label" text="Battle log is empty." class="battle-log-label" />
+                </ui:ScrollView>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,3 +1,4 @@
+using Tsukuyomi.Application.Localization;
 using Tsukuyomi.Application.Settings;
 using Tsukuyomi.Application.UI;
 using Tsukuyomi.Domain.UI;
@@ -9,17 +10,22 @@ namespace Tsukuyomi.Presentation.UI
     public sealed class MainMenuViewBinder : IUiViewBinder
     {
         private readonly IGameSettingsService _settingsService;
+        private readonly ILocalizationService _localizationService;
 
         private IUiNavigator _navigator;
+        private Label _titleLabel;
         private Label _buildLabel;
         private Button _startButton;
         private Button _settingsButton;
         private Button _fallbackButton;
         private Button _quitButton;
 
-        public MainMenuViewBinder(IGameSettingsService settingsService)
+        public MainMenuViewBinder(
+            IGameSettingsService settingsService,
+            ILocalizationService localizationService)
         {
             _settingsService = settingsService;
+            _localizationService = localizationService;
         }
 
         public ScreenId ScreenId => ScreenId.MainMenu;
@@ -27,6 +33,7 @@ namespace Tsukuyomi.Presentation.UI
         public void Bind(IUiElementQuery query, IUiNavigator navigator)
         {
             _navigator = navigator;
+            _titleLabel = query.Q<Label>("title-label");
             _buildLabel = query.Q<Label>("build-label");
             _startButton = query.Q<Button>("start-btn");
             _settingsButton = query.Q<Button>("settings-btn");
@@ -54,20 +61,48 @@ namespace Tsukuyomi.Presentation.UI
             }
 
             _settingsService.Changed += OnSettingsChanged;
+            _localizationService.Changed += OnLocalizationChanged;
             Refresh();
         }
 
         public void Refresh()
         {
+            if (_titleLabel != null)
+            {
+                _titleLabel.text = _localizationService.GetText("ui.main.title");
+            }
+
             if (_buildLabel != null && _settingsService.Data != null)
             {
-                _buildLabel.text = $"Build: {_settingsService.Data.buildLabel}";
+                var buildPrefix = _localizationService.GetText("ui.main.buildPrefix");
+                _buildLabel.text = $"{buildPrefix}: {_settingsService.Data.buildLabel}";
+            }
+
+            if (_startButton != null)
+            {
+                _startButton.text = _localizationService.GetText("ui.main.start");
+            }
+
+            if (_settingsButton != null)
+            {
+                _settingsButton.text = _localizationService.GetText("ui.main.settings");
+            }
+
+            if (_fallbackButton != null)
+            {
+                _fallbackButton.text = _localizationService.GetText("ui.main.fallback");
+            }
+
+            if (_quitButton != null)
+            {
+                _quitButton.text = _localizationService.GetText("ui.main.quit");
             }
         }
 
         public void Unbind()
         {
             _settingsService.Changed -= OnSettingsChanged;
+            _localizationService.Changed -= OnLocalizationChanged;
 
             if (_startButton != null)
             {
@@ -100,9 +135,14 @@ namespace Tsukuyomi.Presentation.UI
             Refresh();
         }
 
+        private void OnLocalizationChanged()
+        {
+            Refresh();
+        }
+
         private void OnStart()
         {
-            Debug.Log("Start requested. Replace this with gameplay scene loading.");
+            _navigator.Replace(ScreenId.AutoChess);
         }
 
         private void OnSettings()

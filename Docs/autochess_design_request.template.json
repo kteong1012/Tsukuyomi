@@ -1,0 +1,53 @@
+{
+  "goal": "Build a tempo composition that spikes on round 3.",
+  "constraints": {
+    "targetPowerBudget": "mid",
+    "allowNewEffectTypes": false,
+    "maxUnitCost": 4
+  },
+  "skills": [
+    {
+      "id": "skill_id_here",
+      "name": "Skill Name",
+      "description": "One-line gameplay intent.",
+      "triggerType": "ActiveWhenManaFull",
+      "effectType": "DamageSingle",
+      "power": 16,
+      "manaCost": 20,
+      "durationTurns": 0
+    }
+  ],
+  "units": [
+    {
+      "id": "unit_id_here",
+      "name": "Unit Name",
+      "cost": 2,
+      "maxHp": 60,
+      "attack": 10,
+      "manaPerAttack": 10,
+      "skillId": "skill_id_here"
+    }
+  ],
+  "waves": [
+    {
+      "round": 1,
+      "enemyUnitIds": ["unit_id_here"]
+    },
+    {
+      "round": 2,
+      "enemyUnitIds": ["unit_id_here", "unit_id_here"]
+    },
+    {
+      "round": 3,
+      "enemyUnitIds": ["unit_id_here", "unit_id_here", "unit_id_here"]
+    }
+  ],
+  "expectedUiState": [
+    "After buy: one occupied bench slot and reduced gold.",
+    "After place: one occupied board slot and matching unit name."
+  ],
+  "acceptanceCases": [
+    "Buy first shop offer, place it on board, start battle, then round becomes 2.",
+    "Hot reload content and verify battle summary contains 'hot reloaded'."
+  ]
+}

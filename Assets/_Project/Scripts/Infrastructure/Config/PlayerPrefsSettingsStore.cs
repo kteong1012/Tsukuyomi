@@ -38,6 +38,19 @@ namespace Tsukuyomi.Infrastructure.Config
             return true;
         }
 
+        public bool TryGetString(string key, out string value)
+        {
+            var fullKey = $"{_prefix}{key}";
+            if (!PlayerPrefs.HasKey(fullKey))
+            {
+                value = string.Empty;
+                return false;
+            }
+
+            value = PlayerPrefs.GetString(fullKey);
+            return true;
+        }
+
         public void SetFloat(string key, float value)
         {
             PlayerPrefs.SetFloat($"{_prefix}{key}", value);
@@ -46,6 +59,11 @@ namespace Tsukuyomi.Infrastructure.Config
         public void SetBool(string key, bool value)
         {
             PlayerPrefs.SetInt($"{_prefix}{key}", value ? 1 : 0);
+        }
+
+        public void SetString(string key, string value)
+        {
+            PlayerPrefs.SetString($"{_prefix}{key}", value ?? string.Empty);
         }
 
         public void Save()

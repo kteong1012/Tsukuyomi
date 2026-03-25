@@ -1,0 +1,162 @@
+.autochess-root {
+    flex-grow: 1;
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    background-color: #0b1422;
+    color: #eef5ff;
+}
+
+.autochess-topbar {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.stat-chip {
+    margin-right: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    background-color: #1a2f4a;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.battle-summary {
+    margin-left: 10px;
+    color: #9ec6f8;
+}
+
+.autochess-main {
+    flex-grow: 1;
+    flex-direction: row;
+}
+
+.autochess-panel {
+    flex-grow: 1;
+    margin-right: 12px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background-color: #13233a;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.autochess-panel:last-child {
+    margin-right: 0;
+}
+
+.panel-title {
+    -unity-font-style: bold;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.slot-wrap {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.slot-wrap > Button {
+    width: 150px;
+    height: 66px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    color: #ecf4ff;
+}
+
+.board-wrap > Button {
+    width: 128px;
+    background-color: #284769;
+}
+
+.bench-wrap > Button {
+    width: 128px;
+    background-color: #2d3a53;
+}
+
+.bench-wrap > Button.selected {
+    background-color: #4d6fa0;
+}
+
+.autochess-shop-button {
+    background-color: #355c86;
+}
+
+.action-button {
+    height: 42px;
+    margin-bottom: 8px;
+    color: #f3f8ff;
+    background-color: #2d4a6f;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.action-button.primary {
+    background-color: #2d7352;
+}
+
+.action-button.secondary {
+    background-color: #415d89;
+}
+
+.action-button.danger {
+    background-color: #7a3d4b;
+}
+
+.selection-label {
+    color: #a7d0ff;
+    margin-top: 4px;
+}
+
+.actions-panel {
+    width: 340px;
+    flex-grow: 0;
+}
+
+.log-title {
+    margin-top: 8px;
+}
+
+.battle-log-scroll {
+    flex-grow: 1;
+    min-height: 280px;
+    background-color: #0d1b2d;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.battle-log-label {
+    white-space: normal;
+    color: #cde4ff;
+}

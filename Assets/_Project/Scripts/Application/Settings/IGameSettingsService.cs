@@ -9,10 +9,14 @@ namespace Tsukuyomi.Application.Settings
 
         GameSettingsConfig Data { get; }
 
+        string CurrentLanguageCode { get; }
+
         void Reload();
 
         void SetMasterVolume(float value);
 
         void SetFullscreen(bool enabled);
+
+        void SetLanguage(string languageCode);
     }
 }

@@ -1,0 +1,123 @@
+{
+  "metadata": {
+    "startingGold": 10,
+    "startingHp": 30,
+    "benchSize": 8,
+    "boardSize": 8,
+    "shopSlots": 5,
+    "refreshCost": 2,
+    "winGold": 5,
+    "lossHpBase": 2,
+    "maxBattleTurns": 200
+  },
+  "shopRules": {
+    "offerUnitIds": [
+      "swordsman",
+      "mage",
+      "priest",
+      "berserker"
+    ]
+  },
+  "skills": [
+    {
+      "id": "fireball",
+      "name": "Fireball",
+      "description": "Cast a fireball to damage one target.",
+      "triggerType": "ActiveWhenManaFull",
+      "effectType": "DamageSingle",
+      "power": 18,
+      "manaCost": 20,
+      "durationTurns": 0
+    },
+    {
+      "id": "first_aid",
+      "name": "First Aid",
+      "description": "Heal self when mana is full.",
+      "triggerType": "ActiveWhenManaFull",
+      "effectType": "HealSelf",
+      "power": 16,
+      "manaCost": 22,
+      "durationTurns": 0
+    },
+    {
+      "id": "battle_cry",
+      "name": "Battle Cry",
+      "description": "Buff self attack for a few turns.",
+      "triggerType": "ActiveWhenManaFull",
+      "effectType": "BuffAttackSelf",
+      "power": 6,
+      "manaCost": 16,
+      "durationTurns": 3
+    }
+  ],
+  "units": [
+    {
+      "id": "swordsman",
+      "name": "Swordsman",
+      "cost": 1,
+      "maxHp": 70,
+      "attack": 12,
+      "manaPerAttack": 8,
+      "skillId": ""
+    },
+    {
+      "id": "mage",
+      "name": "Mage",
+      "cost": 2,
+      "maxHp": 55,
+      "attack": 9,
+      "manaPerAttack": 12,
+      "skillId": "fireball"
+    },
+    {
+      "id": "priest",
+      "name": "Priest",
+      "cost": 2,
+      "maxHp": 62,
+      "attack": 8,
+      "manaPerAttack": 12,
+      "skillId": "first_aid"
+    },
+    {
+      "id": "berserker",
+      "name": "Berserker",
+      "cost": 3,
+      "maxHp": 80,
+      "attack": 11,
+      "manaPerAttack": 10,
+      "skillId": "battle_cry"
+    }
+  ],
+  "waves": [
+    {
+      "round": 1,
+      "enemyUnitIds": [
+        "swordsman",
+        "swordsman"
+      ]
+    },
+    {
+      "round": 2,
+      "enemyUnitIds": [
+        "swordsman",
+        "mage"
+      ]
+    },
+    {
+      "round": 3,
+      "enemyUnitIds": [
+        "priest",
+        "swordsman",
+        "swordsman"
+      ]
+    },
+    {
+      "round": 4,
+      "enemyUnitIds": [
+        "berserker",
+        "mage",
+        "swordsman"
+      ]
+    }
+  ]
+}

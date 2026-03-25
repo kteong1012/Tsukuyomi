@@ -42,5 +42,16 @@ namespace Tsukuyomi.Tests.PlayMode
 
             Assert.That(ProjectRuntime.Navigator.IsVisible(ScreenId.MainMenu), Is.True);
         }
+
+        [UnityTest]
+        public IEnumerator AutoChessScreen_CanBeOpenedFromNavigator()
+        {
+            ProjectCompositionRoot.EnsureInitializedForTests();
+            yield return null;
+
+            ProjectRuntime.Navigator.Replace(ScreenId.AutoChess);
+            yield return null;
+            Assert.That(ProjectRuntime.Navigator.IsVisible(ScreenId.AutoChess), Is.True);
+        }
     }
 }

@@ -2,7 +2,8 @@
   "buildLabel": "prototype-001",
   "ui": {
     "defaultScreen": "MainMenu",
-    "theme": "day"
+    "theme": "day",
+    "language": "zh-Hans"
   },
   "audio": {
     "masterVolume": 0.85,

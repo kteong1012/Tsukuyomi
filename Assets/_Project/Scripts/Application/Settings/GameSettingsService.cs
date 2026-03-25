@@ -9,6 +9,7 @@ namespace Tsukuyomi.Application.Settings
     {
         private const string MasterVolumeKey = "audio.masterVolume";
         private const string FullscreenKey = "video.fullscreen";
+        private const string LanguageKey = "ui.language";
 
         private readonly IConfigRepository<GameSettingsConfig> _repository;
         private readonly IConfigHotReloadService _hotReloadService;
@@ -34,10 +35,13 @@ namespace Tsukuyomi.Application.Settings
 
         public GameSettingsConfig Data => _data;
 
+        public string CurrentLanguageCode => _data?.ui?.language ?? "en";
+
         public void Reload()
         {
             var latest = Clone(_repository.Reload());
             ApplyUserOverrides(latest);
+            latest.ui.language = NormalizeLanguage(latest.ui.language);
             _data = latest;
             ApplyRuntimeEffects();
             Changed?.Invoke();
@@ -71,6 +75,25 @@ namespace Tsukuyomi.Application.Settings
             Changed?.Invoke();
         }
 
+        public void SetLanguage(string languageCode)
+        {
+            if (_data == null)
+            {
+                return;
+            }
+
+            var normalized = NormalizeLanguage(languageCode);
+            if (string.Equals(_data.ui.language, normalized, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            _data.ui.language = normalized;
+            _settingsStore.SetString(LanguageKey, normalized);
+            _settingsStore.Save();
+            Changed?.Invoke();
+        }
+
         private void OnConfigReloaded(string configName)
         {
             if (!string.Equals(configName, _repository.ConfigName, StringComparison.OrdinalIgnoreCase))
@@ -92,6 +115,11 @@ namespace Tsukuyomi.Application.Settings
             {
                 config.video.fullscreen = fullscreen;
             }
+
+            if (_settingsStore.TryGetString(LanguageKey, out var language))
+            {
+                config.ui.language = NormalizeLanguage(language);
+            }
         }
 
         private void ApplyRuntimeEffects()
@@ -105,6 +133,16 @@ namespace Tsukuyomi.Application.Settings
         {
             var json = JsonUtility.ToJson(source);
             return JsonUtility.FromJson<GameSettingsConfig>(json);
+        }
+
+        private static string NormalizeLanguage(string languageCode)
+        {
+            if (string.Equals(languageCode, "zh-Hans", StringComparison.OrdinalIgnoreCase))
+            {
+                return "zh-Hans";
+            }
+
+            return "en";
         }
     }
 }

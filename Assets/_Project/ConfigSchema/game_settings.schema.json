@@ -18,7 +18,8 @@
       "additionalProperties": false,
       "required": [
         "defaultScreen",
-        "theme"
+        "theme",
+        "language"
       ],
       "properties": {
         "defaultScreen": {
@@ -31,6 +32,13 @@
           "type": "string",
           "enum": [
             "day"
+          ]
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "en",
+            "zh-Hans"
           ]
         }
       }

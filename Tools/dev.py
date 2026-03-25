@@ -119,12 +119,219 @@ def validate_single_config(config_name: str, config_path: Path, schema_path: Pat
     return None
 
 
+def validate_semantic_rules(config_name: str, config: Any) -> list[str]:
+    if config_name == "autochess_content":
+        return validate_autochess_semantics(config)
+    if config_name == "game_settings":
+        return validate_game_settings_semantics(config)
+    if config_name == "localization_texts":
+        return validate_localization_texts_semantics(config)
+    return []
+
+
+def validate_integer_range(
+    value: Any,
+    path: str,
+    errors: list[str],
+    minimum: int,
+) -> None:
+    if not isinstance(value, int) or isinstance(value, bool):
+        errors.append(f"{path}: expected integer")
+        return
+
+    if value < minimum:
+        errors.append(f"{path}: must be >= {minimum}")
+
+
+def validate_autochess_semantics(config: Any) -> list[str]:
+    if not isinstance(config, dict):
+        return ["$: expected object"]
+
+    errors: list[str] = []
+    metadata = config.get("metadata", {})
+    if isinstance(metadata, dict):
+        validate_integer_range(metadata.get("startingGold"), "$.metadata.startingGold", errors, 0)
+        validate_integer_range(metadata.get("startingHp"), "$.metadata.startingHp", errors, 1)
+        validate_integer_range(metadata.get("benchSize"), "$.metadata.benchSize", errors, 1)
+        validate_integer_range(metadata.get("boardSize"), "$.metadata.boardSize", errors, 1)
+        validate_integer_range(metadata.get("shopSlots"), "$.metadata.shopSlots", errors, 1)
+        validate_integer_range(metadata.get("refreshCost"), "$.metadata.refreshCost", errors, 0)
+        validate_integer_range(metadata.get("winGold"), "$.metadata.winGold", errors, 0)
+        validate_integer_range(metadata.get("lossHpBase"), "$.metadata.lossHpBase", errors, 1)
+        validate_integer_range(metadata.get("maxBattleTurns"), "$.metadata.maxBattleTurns", errors, 1)
+
+    skills = config.get("skills", [])
+    skill_ids: set[str] = set()
+    if isinstance(skills, list):
+        for idx, skill in enumerate(skills):
+            if not isinstance(skill, dict):
+                continue
+            skill_id = str(skill.get("id", "")).strip()
+            if not skill_id:
+                errors.append(f"$.skills[{idx}].id: skill id must not be empty")
+                continue
+            if skill_id in skill_ids:
+                errors.append(f"$.skills[{idx}].id: duplicate skill id '{skill_id}'")
+                continue
+            skill_ids.add(skill_id)
+
+    units = config.get("units", [])
+    unit_ids: set[str] = set()
+    if isinstance(units, list):
+        for idx, unit in enumerate(units):
+            if not isinstance(unit, dict):
+                continue
+            unit_id = str(unit.get("id", "")).strip()
+            if not unit_id:
+                errors.append(f"$.units[{idx}].id: unit id must not be empty")
+                continue
+            if unit_id in unit_ids:
+                errors.append(f"$.units[{idx}].id: duplicate unit id '{unit_id}'")
+                continue
+            unit_ids.add(unit_id)
+
+        for idx, unit in enumerate(units):
+            if not isinstance(unit, dict):
+                continue
+            skill_id = str(unit.get("skillId", "")).strip()
+            if skill_id and skill_id not in skill_ids:
+                errors.append(
+                    f"$.units[{idx}].skillId: references missing skill '{skill_id}'"
+                )
+
+    if not unit_ids:
+        errors.append("$.units: at least one unit is required")
+
+    shop_rules = config.get("shopRules", {})
+    offer_unit_ids = shop_rules.get("offerUnitIds", []) if isinstance(shop_rules, dict) else []
+    if isinstance(offer_unit_ids, list):
+        if len(offer_unit_ids) == 0:
+            errors.append("$.shopRules.offerUnitIds: must include at least one unit id")
+        for idx, offer_id in enumerate(offer_unit_ids):
+            offer = str(offer_id).strip()
+            if offer and offer not in unit_ids:
+                errors.append(
+                    f"$.shopRules.offerUnitIds[{idx}]: references missing unit '{offer}'"
+                )
+
+    waves = config.get("waves", [])
+    rounds: set[int] = set()
+    if isinstance(waves, list):
+        for wave_idx, wave in enumerate(waves):
+            if not isinstance(wave, dict):
+                continue
+            round_value = wave.get("round")
+            if isinstance(round_value, bool) or not isinstance(round_value, int):
+                errors.append(f"$.waves[{wave_idx}].round: expected integer")
+            else:
+                if round_value < 1:
+                    errors.append(f"$.waves[{wave_idx}].round: must be >= 1")
+                if round_value in rounds:
+                    errors.append(f"$.waves[{wave_idx}].round: duplicate round '{round_value}'")
+                rounds.add(round_value)
+
+            enemy_ids = wave.get("enemyUnitIds", [])
+            if isinstance(enemy_ids, list):
+                for enemy_idx, enemy_id in enumerate(enemy_ids):
+                    enemy = str(enemy_id).strip()
+                    if enemy and enemy not in unit_ids:
+                        errors.append(
+                            f"$.waves[{wave_idx}].enemyUnitIds[{enemy_idx}]: "
+                            f"references missing unit '{enemy}'"
+                        )
+
+    return errors
+
+
+def validate_game_settings_semantics(config: Any) -> list[str]:
+    if not isinstance(config, dict):
+        return ["$: expected object"]
+
+    errors: list[str] = []
+    ui = config.get("ui", {})
+    if not isinstance(ui, dict):
+        errors.append("$.ui: expected object")
+        return errors
+
+    language = str(ui.get("language", "")).strip()
+    if language not in {"en", "zh-Hans"}:
+        errors.append("$.ui.language: must be one of ['en', 'zh-Hans']")
+    return errors
+
+
+def validate_localization_texts_semantics(config: Any) -> list[str]:
+    if not isinstance(config, dict):
+        return ["$: expected object"]
+
+    errors: list[str] = []
+
+    default_language = str(config.get("defaultLanguage", "")).strip()
+    if default_language not in {"en", "zh-Hans"}:
+        errors.append("$.defaultLanguage: must be one of ['en', 'zh-Hans']")
+
+    languages = config.get("languages", [])
+    language_codes: set[str] = set()
+    if isinstance(languages, list):
+        for idx, item in enumerate(languages):
+            if not isinstance(item, dict):
+                errors.append(f"$.languages[{idx}]: expected object")
+                continue
+            code = str(item.get("code", "")).strip()
+            display_name = str(item.get("displayName", "")).strip()
+            if code not in {"en", "zh-Hans"}:
+                errors.append(f"$.languages[{idx}].code: unsupported language code '{code}'")
+                continue
+            if code in language_codes:
+                errors.append(f"$.languages[{idx}].code: duplicate language code '{code}'")
+            language_codes.add(code)
+            if not display_name:
+                errors.append(f"$.languages[{idx}].displayName: must not be empty")
+    else:
+        errors.append("$.languages: expected array")
+
+    entries = config.get("entries", [])
+    entry_keys: set[str] = set()
+    if isinstance(entries, list):
+        for idx, item in enumerate(entries):
+            if not isinstance(item, dict):
+                errors.append(f"$.entries[{idx}]: expected object")
+                continue
+            key = str(item.get("key", "")).strip()
+            en_text = str(item.get("en", "")).strip()
+            zh_text = str(item.get("zhHans", "")).strip()
+            if not key:
+                errors.append(f"$.entries[{idx}].key: must not be empty")
+                continue
+            if key in entry_keys:
+                errors.append(f"$.entries[{idx}].key: duplicate key '{key}'")
+                continue
+            entry_keys.add(key)
+
+            if not en_text:
+                errors.append(f"$.entries[{idx}].en: must not be empty")
+            if not zh_text:
+                errors.append(f"$.entries[{idx}].zhHans: must not be empty")
+    else:
+        errors.append("$.entries: expected array")
+
+    if len(entry_keys) == 0:
+        errors.append("$.entries: at least one translation entry is required")
+
+    return errors
+
+
 def validate_all_configs() -> list[ValidationError]:
     errors: list[ValidationError] = []
     for config_name, config_path, schema_path in discover_config_pairs():
         issue = validate_single_config(config_name, config_path, schema_path)
         if issue:
             errors.append(issue)
+            continue
+
+        config = load_json(config_path)
+        semantic_errors = validate_semantic_rules(config_name, config)
+        for message in semantic_errors:
+            errors.append(ValidationError(config_name, message))
     return errors
 
 

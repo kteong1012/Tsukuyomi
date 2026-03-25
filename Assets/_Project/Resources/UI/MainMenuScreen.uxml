@@ -1,7 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/_Project/Resources/UI/MainMenuScreen.uss?fileID=7433441132597879392&amp;guid=ce964139be637294ebd3e51a594f92a2&amp;type=3#MainMenuScreen" />
     <ui:VisualElement name="main-menu-root" class="screen main-menu">
-        <ui:Label text="TSUKUYOMI" class="main-menu-title" />
+        <ui:Label name="title-label" text="TSUKUYOMI" class="main-menu-title" />
         <ui:Label name="build-label" text="Build: -/-" class="main-menu-build-label" />
         <ui:VisualElement class="main-menu-actions">
             <ui:Button name="start-btn" text="Start Game" class="main-menu-button" />

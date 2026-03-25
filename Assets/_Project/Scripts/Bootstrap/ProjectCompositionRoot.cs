@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Reflection;
+using Tsukuyomi.Application.AutoChess;
 using Tsukuyomi.Application.Config;
+using Tsukuyomi.Application.Localization;
 using Tsukuyomi.Application.Settings;
 using Tsukuyomi.Application.UI;
 using Tsukuyomi.Domain.UI;
@@ -124,20 +126,33 @@ namespace Tsukuyomi.Bootstrap
             }
 
             var validator = new JsonSchemaConfigValidator();
-            var configRepository = new JsonConfigRepository<GameSettingsConfig>(
+            var settingsRepository = new JsonConfigRepository<GameSettingsConfig>(
                 "game_settings",
                 validator,
                 ConfigPaths.GetConfigSourcePath("game_settings"),
                 ConfigPaths.GetSchemaSourcePath("game_settings"));
             _hotReloadService = new JsonConfigHotReloadService(ConfigPaths.GetConfigSourcePath("game_settings"));
+            var autoChessRepository = new JsonConfigRepository<AutoChessContentConfig>(
+                "autochess_content",
+                validator,
+                ConfigPaths.GetConfigSourcePath("autochess_content"),
+                ConfigPaths.GetSchemaSourcePath("autochess_content"));
+            var localizationRepository = new JsonConfigRepository<LocalizationTextsConfig>(
+                "localization_texts",
+                validator,
+                ConfigPaths.GetConfigSourcePath("localization_texts"),
+                ConfigPaths.GetSchemaSourcePath("localization_texts"));
             var settingsStore = new PlayerPrefsSettingsStore("tsukuyomi.settings.");
-            var settingsService = new GameSettingsService(configRepository, _hotReloadService, settingsStore);
+            var settingsService = new GameSettingsService(settingsRepository, _hotReloadService, settingsStore);
+            var autoChessService = new AutoChessGameService(autoChessRepository, _hotReloadService);
+            var localizationService = new LocalizationService(localizationRepository, _hotReloadService, settingsService);
 
             var screenDefinitions = BuildScreenDefinitions();
             var binderFactories = new Dictionary<ScreenId, Func<IUiViewBinder>>
             {
-                [ScreenId.MainMenu] = () => new MainMenuViewBinder(settingsService),
-                [ScreenId.Settings] = () => new SettingsViewBinder(settingsService)
+                [ScreenId.MainMenu] = () => new MainMenuViewBinder(settingsService, localizationService),
+                [ScreenId.Settings] = () => new SettingsViewBinder(settingsService, localizationService),
+                [ScreenId.AutoChess] = () => new AutoChessViewBinder(autoChessService, localizationService)
             };
             var uguiFallbackHost = new UguiFallbackHost();
 
@@ -147,7 +162,7 @@ namespace Tsukuyomi.Bootstrap
                 binderFactories,
                 uguiFallbackHost);
 
-            ProjectRuntime.Initialize(_uiNavigator, settingsService);
+            ProjectRuntime.Initialize(_uiNavigator, settingsService, autoChessService, localizationService);
 
             var defaultScreen = ParseDefaultScreen(settingsService.Data?.ui?.defaultScreen);
             _uiNavigator.Show(defaultScreen);
@@ -247,6 +262,12 @@ namespace Tsukuyomi.Bootstrap
                     "UI/SettingsScreen",
                     new[] { "UI/SettingsScreen" },
                     ScreenLayer.Modal,
+                    cacheInstance: true),
+                new ScreenDefinition(
+                    ScreenId.AutoChess,
+                    "UI/AutoChessScreen",
+                    new[] { "UI/AutoChessScreen" },
+                    ScreenLayer.Base,
                     cacheInstance: true),
                 new ScreenDefinition(
                     ScreenId.UguiFallbackDemo,

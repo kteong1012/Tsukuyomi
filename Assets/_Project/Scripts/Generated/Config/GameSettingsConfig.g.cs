@@ -7,6 +7,7 @@ namespace Tsukuyomi.Generated.Config
     {
         public string defaultScreen = "MainMenu";
         public string theme = "day";
+        public string language = "zh-Hans";
     }
 
     [Serializable]

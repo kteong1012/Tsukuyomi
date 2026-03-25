@@ -4,6 +4,7 @@ namespace Tsukuyomi.Domain.UI
     {
         MainMenu = 0,
         Settings = 1,
-        UguiFallbackDemo = 2
+        AutoChess = 2,
+        UguiFallbackDemo = 3
     }
 }

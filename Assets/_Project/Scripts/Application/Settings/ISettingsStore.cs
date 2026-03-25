@@ -6,9 +6,13 @@ namespace Tsukuyomi.Application.Settings
 
         bool TryGetBool(string key, out bool value);
 
+        bool TryGetString(string key, out string value);
+
         void SetFloat(string key, float value);
 
         void SetBool(string key, bool value);
+
+        void SetString(string key, string value);
 
         void Save();
     }
