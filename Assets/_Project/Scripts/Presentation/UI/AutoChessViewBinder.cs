@@ -24,6 +24,7 @@ namespace Tsukuyomi.Presentation.UI
         private Label _battleSummaryLabel;
         private Label _selectionLabel;
         private Label _battleLogLabel;
+        private VisualElement _autochessRoot;
         private VisualElement _shopContainer;
         private VisualElement _boardContainer;
         private VisualElement _benchContainer;
@@ -38,6 +39,7 @@ namespace Tsukuyomi.Presentation.UI
         private readonly List<Button> _benchButtons = new();
 
         private int _selectedBenchIndex = -1;
+        private int _hiddenReplayId = -1;
 
         public AutoChessViewBinder(
             IAutoChessGameService gameService,
@@ -57,6 +59,7 @@ namespace Tsukuyomi.Presentation.UI
             _benchTitleLabel = query.Q<Label>("bench-title-label");
             _actionsTitleLabel = query.Q<Label>("actions-title-label");
             _battleLogTitleLabel = query.Q<Label>("battle-log-title-label");
+            _autochessRoot = query.Q<VisualElement>("autochess-root");
             _roundLabel = query.Q<Label>("round-label");
             _goldLabel = query.Q<Label>("gold-label");
             _hpLabel = query.Q<Label>("hp-label");
@@ -74,6 +77,8 @@ namespace Tsukuyomi.Presentation.UI
 
             _gameService.Changed += OnGameChanged;
             _localizationService.Changed += OnLocalizationChanged;
+            AutoChessBattlePlaybackSignals.ReplayStarted += OnReplayStarted;
+            AutoChessBattlePlaybackSignals.ReplayCompleted += OnReplayCompleted;
 
             if (_refreshShopButton != null)
             {
@@ -101,6 +106,7 @@ namespace Tsukuyomi.Presentation.UI
             }
 
             BuildDynamicButtons();
+            SetHudVisible(true);
             Refresh();
         }
 
@@ -183,6 +189,10 @@ namespace Tsukuyomi.Presentation.UI
         {
             _gameService.Changed -= OnGameChanged;
             _localizationService.Changed -= OnLocalizationChanged;
+            AutoChessBattlePlaybackSignals.ReplayStarted -= OnReplayStarted;
+            AutoChessBattlePlaybackSignals.ReplayCompleted -= OnReplayCompleted;
+            _hiddenReplayId = -1;
+            SetHudVisible(true);
 
             if (_refreshShopButton != null)
             {
@@ -453,6 +463,23 @@ namespace Tsukuyomi.Presentation.UI
             Refresh();
         }
 
+        private void OnReplayStarted(int replayId)
+        {
+            _hiddenReplayId = replayId;
+            SetHudVisible(false);
+        }
+
+        private void OnReplayCompleted(int replayId)
+        {
+            if (_hiddenReplayId > 0 && replayId != _hiddenReplayId)
+            {
+                return;
+            }
+
+            _hiddenReplayId = -1;
+            SetHudVisible(true);
+        }
+
         private void OnLocalizationChanged()
         {
             BuildDynamicButtons();
@@ -510,6 +537,17 @@ namespace Tsukuyomi.Presentation.UI
             {
                 _backButton.text = _localizationService.GetText("ui.autochess.backMenu");
             }
+        }
+
+        private void SetHudVisible(bool visible)
+        {
+            if (_autochessRoot == null)
+            {
+                return;
+            }
+
+            _autochessRoot.style.visibility = visible ? Visibility.Visible : Visibility.Hidden;
+            _autochessRoot.pickingMode = visible ? PickingMode.Position : PickingMode.Ignore;
         }
     }
 }

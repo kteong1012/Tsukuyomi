@@ -28,6 +28,7 @@ namespace Tsukuyomi.Bootstrap.World
         private Sprite _generatedFallbackSprite;
         private Coroutine _replayCoroutine;
         private int _lastReplayId = -1;
+        private int _activeReplayId;
         private bool _lastVisibleState;
         private bool _isInitialized;
 
@@ -96,11 +97,7 @@ namespace Tsukuyomi.Bootstrap.World
                 return;
             }
 
-            if (_replayCoroutine != null)
-            {
-                StopCoroutine(_replayCoroutine);
-                _replayCoroutine = null;
-            }
+            StopReplayIfRunning();
 
             _hotReloadService.Reloaded -= OnConfigReloaded;
             _gameService.Changed -= OnGameChanged;
@@ -166,6 +163,10 @@ namespace Tsukuyomi.Bootstrap.World
                 yield break;
             }
 
+            var replayId = replay.replayId;
+            _activeReplayId = replayId;
+            AutoChessBattlePlaybackSignals.PublishReplayStarted(replayId);
+
             RenderReplayFormation(replay);
             _cameraDirector.SetBoardView();
 
@@ -201,6 +202,11 @@ namespace Tsukuyomi.Bootstrap.World
             var hold = Mathf.Max(0.05f, _viewConfig.battleWorld.postBattleHold);
             yield return new WaitForSecondsRealtime(hold);
             RenderIdleBoard(_gameService.Snapshot);
+            AutoChessBattlePlaybackSignals.PublishReplayCompleted(replayId);
+            if (_activeReplayId == replayId)
+            {
+                _activeReplayId = 0;
+            }
             _replayCoroutine = null;
         }
 
@@ -593,6 +599,12 @@ namespace Tsukuyomi.Bootstrap.World
             {
                 StopCoroutine(_replayCoroutine);
                 _replayCoroutine = null;
+            }
+
+            if (_activeReplayId > 0)
+            {
+                AutoChessBattlePlaybackSignals.PublishReplayCompleted(_activeReplayId);
+                _activeReplayId = 0;
             }
         }
 
